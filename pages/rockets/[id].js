@@ -1,6 +1,10 @@
 import React from 'react'
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 import Head from 'next/head'
+const client = new ApolloClient({
+    uri: 'https://api.spacex.land/graphql/',
+    cache: new InMemoryCache()
+});
 export default function Rocket({ launches }) {
     return (
         <>
@@ -23,10 +27,6 @@ export default function Rocket({ launches }) {
     )
 }
 export async function getStaticPaths() {
-    const client = new ApolloClient({
-        uri: 'https://api.spacex.land/graphql/',
-        cache: new InMemoryCache()
-    });
     const { data } = await client.query({
         query: gql`
     {
@@ -46,10 +46,6 @@ export async function getStaticPaths() {
     }
 }
 export async function getStaticProps({ params: { id } }) {
-    const client = new ApolloClient({
-        uri: 'https://api.spacex.land/graphql/',
-        cache: new InMemoryCache()
-    });
     const { data } = await client.query({
         query: gql`
         {

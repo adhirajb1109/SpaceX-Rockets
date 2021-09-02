@@ -1,4 +1,8 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+const client = new ApolloClient({
+  uri: 'https://api.spacex.land/graphql/',
+  cache: new InMemoryCache()
+});
 export default function Home({ launches }) {
   return (
     <div>
@@ -19,10 +23,6 @@ export default function Home({ launches }) {
   )
 }
 export async function getStaticProps() {
-  const client = new ApolloClient({
-    uri: 'https://api.spacex.land/graphql/',
-    cache: new InMemoryCache()
-  });
   const { data } = await client.query({
     query: gql`
     {
