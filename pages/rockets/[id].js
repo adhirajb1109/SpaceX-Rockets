@@ -5,47 +5,29 @@ const client = new ApolloClient({
     uri: 'https://api.spacex.land/graphql/',
     cache: new InMemoryCache()
 });
-export default function Rocket({ launches }) {
+export default function Rocket({ launch }) {
     return (
         <>
             <Head>
-                <title>{`SpaceX Rockets | ${launches.mission_name}`}</title>
-                <link rel="shortcut icon" href={launches.links.mission_patch_small} />
+                <title>{`SpaceX Rockets | ${launch.mission_name}`}</title>
+                <link rel="shortcut icon" href={launch.links.mission_patch_small} />
             </Head>
             <div className="container">
                 <div className="card my-3 mx-auto" style={{ width: "18rem" }}>
-                    {launches.links.mission_patch_small == null ? null : <img src={launches.links.mission_patch_small} className="card-img-top" alt={launches.mission_name} />}
+                    {launch.links.mission_patch_small == null ? null : <img src={launch.links.mission_patch_small} className="card-img-top" alt={launch.mission_name} />}
                     <div className="card-body">
-                        <h5 className="card-title">{launches.mission_name}</h5>
-                        <p className="card-text">Rocket - {launches.rocket.rocket_name}</p>
-                        <p className="card-text">{launches.details}</p>
-                        <a href={launches.links.wikipedia} className="btn btn-outline-dark">Wikipedia</a>
+                        <h5 className="card-title">{launch.mission_name}</h5>
+                        <p className="card-text">Rocket - {launch.rocket.rocket_name}</p>
+                        <p className="card-text">{launch.details}</p>
+                        <a href={launch.links.wikipedia} className="btn btn-outline-dark">Wikipedia</a>
                     </div>
                 </div>
             </div>
         </>
     )
 }
-export async function getStaticPaths() {
-    const { data } = await client.query({
-        query: gql`
-    {
-      launchesPast {
-        id
-      }
-    }`
-    })
-    const paths = data.launchesPast.map((rocket) => (
-        {
-            params: { id: rocket.id }
-        }
-    ))
-    return {
-        paths,
-        fallback: true
-    }
-}
-export async function getStaticProps({ params: { id } }) {
+export async function getServerSideProps({ query }) {
+    const id = query.id;
     const { data } = await client.query({
         query: gql`
         {
@@ -65,7 +47,7 @@ export async function getStaticProps({ params: { id } }) {
     })
     return {
         props: {
-            launches: data.launch
+            launch: data.launch
         }
     }
 }
